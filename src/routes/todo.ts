@@ -3,13 +3,17 @@ const router = Router();
 
 import { createTodo, getTodos, getTodo, deleteTodo, updateTodo } from '../controllers/todo.controller'
 
-router.route('/')
-  .post(createTodo)
-  .get(getTodos)
+import { verifyToken, isOwner } from '../middlewares/authJWT'
 
-router.route('/:id')
-  .get(getTodo)
-  .delete(deleteTodo)
-  .put(updateTodo)
+router.get( "/", getTodos );
+
+router.post( "/", [verifyToken], createTodo );
+
+router.get( "/:id", getTodo );
+
+router.delete( "/:id", [verifyToken, isOwner], deleteTodo );
+
+router.put ( "/:id", [verifyToken, isOwner], updateTodo );
 
 export default router;
+

@@ -7,12 +7,12 @@ export function helloWorld (req: Request, res: Response): Response {
 }
 
 export async function createUser (req: Request, res: Response): Promise<Response> {
-  const { id, name, email, username } = req.body;
+  const { id, name, password, username } = req.body;
   console.log('Creating user');
   const newUser = {
     id: id,
     name: name,
-    email: email,
+    password: password,
     username: username
   }
   const user = new User(newUser);
@@ -51,11 +51,11 @@ export async function deleteUser(req: Request, res: Response): Promise<Response>
 export async function updateUser(req: Request, res: Response): Promise<Response> {
   console.log('Update user');
   const _id = req.params.id;
-  const { id, name, email, username } = req.body;
+  const { id, name, password, username } = req.body;
   const user = await User.findByIdAndUpdate(_id, {
     id,
     name,
-    email,
+    password,
     username
   }, {new: true});
   return res.json({
