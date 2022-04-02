@@ -3,12 +3,11 @@ import jwt from "jsonwebtoken";
 
 import User from "../models/User";
 import Todo from '../models/Todo';
+import IJwtPayload from '../models/JWTPayload';
 
 const _SECRET: string = 'api+jwt';
 
-interface JwtPayload {
-    id: string
-  }
+
 
   // https://dev.to/kwabenberko/extend-express-s-request-object-with-typescript-declaration-merging-1nn5
 
@@ -20,7 +19,7 @@ export async function verifyToken (req: Request, res: Response, next: NextFuncti
 
   try {
     
-    const decoded = jwt.verify(token, _SECRET) as JwtPayload;
+    const decoded = jwt.verify(token, _SECRET) as IJwtPayload;
     console.log("verifyToken");
     req.userId = decoded.id;
     const user = await User.findById(req.userId, { password: 0 });
