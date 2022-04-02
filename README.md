@@ -6,9 +6,8 @@ https://nozzlegear.com/blog/implementing-a-jwt-auth-system-with-typescript-and-n
 
 alternatives 
 
-'''
-jwtPayload = <any>jwt.verify(token, config.SECRET);
-'''
+`jwtPayload = <any>jwt.verify(token, config.SECRET);`
+
 
 ## Extend Express Request Object
 
@@ -16,6 +15,4 @@ https://dev.to/kwabenberko/extend-express-s-request-object-with-typescript-decla
 
 alternatives
 
-'''
-res.locals.jwtPayload = jwtPayload;
-'''
+`res.locals.jwtPayload = jwtPayload;`
