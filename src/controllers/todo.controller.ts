@@ -2,10 +2,6 @@ import { Request, Response } from 'express'
 
 import Todo from '../models/Todo';
 
-export function helloWorld (req: Request, res: Response): Response { 
-  return res.send('hello world');
-}
-
 export async function createTodo (req: Request, res: Response): Promise<Response> {
   const { id, user, name, completed } = req.body;
   console.log('Creating todo');

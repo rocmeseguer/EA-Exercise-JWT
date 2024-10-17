@@ -2,10 +2,6 @@ import { Request, Response } from 'express'
 
 import User from '../models/User';
 
-export function helloWorld (req: Request, res: Response): Response { 
-  return res.send('hello world');
-}
-
 export async function createUser (req: Request, res: Response): Promise<Response> {
   const { id, name, password, username } = req.body;
   console.log('Creating user');
