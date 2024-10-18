@@ -1,61 +1,71 @@
 import { Request, Response } from 'express'
 
-import User from '../models/User';
+import IUser from '../models/User';
 
 export async function createUser (req: Request, res: Response): Promise<Response> {
-  const { id, name, password, username } = req.body;
+  const { username, password } = req.body;
   console.log('Creating user');
-  const newUser = {
-    id: id,
-    name: name,
-    password: password,
-    username: username
-  }
-  const user = new User(newUser);
-  await user.save();
-  console.log(user);
 
-  return res.json({
-    message: "User created",
-    user
-  });
+  const newUser = { username, password } as IUser;
+
+/* 
+  Aqui lo guardamos en la base de datos
+*/
+
+  return res.json(newUser);
 }
 
 export async function getUsers (req: Request, res: Response): Promise<Response> {
   console.log('Get users');
-  const users = await User.find();
+
+  /* 
+  Aqui la base de datos
+  */
+
+  const users: IUser[] = [
+    { username: "user1", password: 'password1' },
+    { username: "user2", password: 'password2' },
+    { username: "user3", password: 'password3' }
+  ];
+  
   return res.json(users);
 }
 
 export async function getUser(req: Request, res: Response): Promise<Response> {
   console.log('Get user');
   const id = req.params.id;
-  const user = await User.findById(id);
+
+ /* 
+  Aqui la base de datos
+  */
+
+  const user: IUser = { username: "user1", password: 'password1' };
+
   return res.json(user);
 }
 
 export async function deleteUser(req: Request, res: Response): Promise<Response> {
   console.log('Delete user');
   const id = req.params.id;
-  const user = await User.findByIdAndRemove(id);
-  return res.json({
-    message: "User deleted",
-    user
-  });
+ /* 
+  Aqui la base de datos
+  */
+
+  const user: IUser = { username: "user1", password: 'password1' };
+
+  return res.json(user);
 }
 
 export async function updateUser(req: Request, res: Response): Promise<Response> {
-  console.log('Update user');
+  console.log('Updating user');
   const _id = req.params.id;
-  const { id, name, password, username } = req.body;
-  const user = await User.findByIdAndUpdate(_id, {
-    id,
-    name,
-    password,
-    username
-  }, {new: true});
-  return res.json({
-    message: "User updated",
-    user
-  });
+  const { username, password } = req.body;
+
+  const user = { username, password } as IUser;
+
+/* 
+  Aqui lo guardamos en la base de datos
+*/
+
+  return res.json(user);
 }

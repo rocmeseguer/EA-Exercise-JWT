@@ -2,7 +2,6 @@ import express, { RequestHandler } from 'express';
 import cors from 'cors';
 
 import userRoutes from './routes/user';
-import todoRoutes from './routes/todo';
 import authRoutes from './routes/auth';
 
 // Initializations
@@ -18,7 +17,6 @@ app.use(express.json() as RequestHandler);
 
 // Routes
 app.use('/api/users', userRoutes);
-app.use('/api/todos', todoRoutes);
 app.use('/api/auth', authRoutes);
 
 export default app;

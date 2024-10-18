@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from 'express'
 import jwt from "jsonwebtoken";
 
 import User from "../models/User";
-import Todo from '../models/Todo';
 import IJwtPayload from '../models/JWTPayload';
 
 const _SECRET: string = 'api+jwt';
@@ -19,12 +18,21 @@ export async function verifyToken (req: Request, res: Response, next: NextFuncti
   try {
   
     const decoded = jwt.verify(token, _SECRET) as IJwtPayload;
+
+    // Alternativas para pasar el id del IJwtPayload
+
+    // Modificando el Type Request de Express
     req.userId = decoded.id;
+
+    // Usando res.locals
+    res.locals.UserId = decoded.id;
+
 /* 
-    No revisamos que el usuario esté en la base de datos
-    const user = await User.findById(req.userId, { password: 0 });
+    Aqui revisamos que el usuario esté en la base de datos
+
     if (!user) 
       return res.status(404).json({ message: "No user found" });
+
 */    
     next();
 
@@ -36,16 +44,32 @@ export async function verifyToken (req: Request, res: Response, next: NextFuncti
 
 export async function isOwner (req: Request, res: Response, next: NextFunction) {
   try {
-    const user = await User.findById(req.userId);
 
-    const todoId = req.params.id;
-    const todo = await Todo.findById(todoId);
+    // Alternativas para pasar el id del IJwtPayload
+    // Mirar function verifyToken()
 
-    if (!todo) 
-      return res.status(403).json({ message: "No user found" });
+    // Modificando el Type Request de Express
+    const userIdRequest = req.userId;
 
-    if (todo.user != req.userId) 
-      return res.status(403).json({ message: "Not Owner" });
+    // Usando res.locals
+    const userIdResponseLocals = res.locals.UserId;
+    
+    /* 
+        Aqui revisamos que el usuario esté en la base de datos
+
+        if (!user) 
+          return res.status(404).json({ message: "No user found" });
+
+    */  
+
+    /* 
+        Aqui revisamos que el usuario sea el propietario
+
+        if (user._id != req.userId) 
+          return res.status(403).json({ message: "Not Owner" });
+
+
+    */  
 
     next();
 
