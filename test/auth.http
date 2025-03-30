@@ -1,0 +1,35 @@
+### Sign up a new user
+POST http://localhost:4000/api/auth/signup
+Content-Type: application/json
+
+{
+    "username": "testuser",
+    "password": "testpass123"
+}
+
+### Sign in with existing user
+POST http://localhost:4000/api/auth/signin
+Content-Type: application/json
+
+{
+    "username": "testuser",
+    "password": "testpass123"
+}
+
+### Sign in with predefined user (user1)
+POST http://localhost:4000/api/auth/signin
+Content-Type: application/json
+
+{
+    "username": "user1",
+    "password": "password1"
+}
+
+### Failed sign in (wrong password)
+POST http://localhost:4000/api/auth/signin
+Content-Type: application/json
+
+{
+    "username": "user1",
+    "password": "wrongpassword"
+}

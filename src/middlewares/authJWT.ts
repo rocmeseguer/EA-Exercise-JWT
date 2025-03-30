@@ -8,10 +8,9 @@ const _SECRET: string = 'api+jwt';
 
 
 export async function verifyToken (req: Request, res: Response, next: NextFunction) {
-    const token = req.headers['x-access-token'] as string;
-
-    console.log(token);
-
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1]; // Bearer <token>
+    
     if (!token) 
       return res.status(403).json({ message: "No token provided" });
 
@@ -50,26 +49,18 @@ export async function isOwner (req: Request, res: Response, next: NextFunction) 
 
     // Modificando el Type Request de Express
     const userIdRequest = req.userId;
+    console.log('userIdRequest', userIdRequest);
 
     // Usando res.locals
     const userIdResponseLocals = res.locals.UserId;
+    console.log('userIdResponseLocals', userIdResponseLocals);
     
-    /* 
-        Aqui revisamos que el usuario esté en la base de datos
+    
 
-        if (!user) 
-          return res.status(404).json({ message: "No user found" });
-
-    */  
-
-    /* 
-        Aqui revisamos que el usuario sea el propietario
-
-        if (user._id != req.userId) 
-          return res.status(403).json({ message: "Not Owner" });
-
-
-    */  
+    // Aqui revisamos que el usuario sea el propietario
+    const username = req.params.id;
+    if (username != userIdRequest) 
+      return res.status(403).json({ message: "Not Owner" });
 
     next();
 
