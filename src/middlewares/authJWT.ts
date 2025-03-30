@@ -5,7 +5,7 @@ import User from "../models/User";
 import IJwtPayload from '../models/JWTPayload';
 
 const _SECRET: string = 'api+jwt';
-
+const _REFRESH_SECRET: string = 'refresh+jwt';
 
 export async function verifyToken (req: Request, res: Response, next: NextFunction) {
     const authHeader = req.headers['authorization'];
@@ -15,24 +15,25 @@ export async function verifyToken (req: Request, res: Response, next: NextFuncti
       return res.status(403).json({ message: "No token provided" });
 
   try {
-  
     const decoded = jwt.verify(token, _SECRET) as IJwtPayload;
 
-    // Alternativas para pasar el id del IJwtPayload
+    if (decoded.type !== 'access') {
+      return res.status(401).json({ message: "Invalid token type - Access token required" });
+    }
 
-    // Modificando el Type Request de Express
+    // Alternativas para pasar el id del usuario a la siguiente función
+    // 1. Modificando el Type Request de Express
     req.userId = decoded.id;
-
-    // Usando res.locals
+    // 2. Usando res.locals
     res.locals.UserId = decoded.id;
 
-/* 
+    
+    /* 
     Aqui revisamos que el usuario esté en la base de datos
 
     if (!user) 
       return res.status(404).json({ message: "No user found" });
-
-*/    
+    */    
     next();
 
   } catch (error) {
@@ -40,24 +41,13 @@ export async function verifyToken (req: Request, res: Response, next: NextFuncti
   }
 };
 
-
 export async function isOwner (req: Request, res: Response, next: NextFunction) {
   try {
 
-    // Alternativas para pasar el id del IJwtPayload
-    // Mirar function verifyToken()
-
-    // Modificando el Type Request de Express
+    // Cogemos el id del usuario del middleware anterior
     const userIdRequest = req.userId;
-    console.log('userIdRequest', userIdRequest);
-
-    // Usando res.locals
     const userIdResponseLocals = res.locals.UserId;
-    console.log('userIdResponseLocals', userIdResponseLocals);
     
-    
-
-    // Aqui revisamos que el usuario sea el propietario
     const username = req.params.id;
     if (username != userIdRequest) 
       return res.status(403).json({ message: "Not Owner" });
@@ -69,4 +59,26 @@ export async function isOwner (req: Request, res: Response, next: NextFunction) 
     return res.status(500).send({ message: error });
   }
 };
+
+export async function verifyRefreshToken(req: Request, res: Response, next: NextFunction) {
+    const authHeader = req.headers['authorization'];
+    const refreshToken = authHeader && authHeader.split(' ')[1]; // Bearer <token>
+    
+    if (!refreshToken) 
+        return res.status(403).json({ message: "No refresh token provided" });
+    
+    try {
+        const decoded = jwt.verify(refreshToken, _REFRESH_SECRET) as IJwtPayload;
+        if (decoded.type !== 'refresh') {
+            return res.status(401).json({ message: "Invalid token type - Refresh token required" });
+        }
+        
+        req.userId = decoded.id;
+        res.locals.UserId = decoded.id;
+        
+        next();
+    } catch (error) {
+        return res.status(401).json({ message: "Invalid refresh token!" });
+    }
+}
 

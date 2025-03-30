@@ -1,0 +1,71 @@
+### Authentication Tests ###
+
+### Sign up a new user
+# @name signup
+POST http://localhost:4000/api/auth/signup
+Content-Type: application/json
+
+{
+    "username": "testuser",
+    "password": "testpass123"
+}
+
+### Sign in with credentials
+# @name signin
+POST http://localhost:4000/api/auth/signin
+Content-Type: application/json
+
+{
+    "username": "testuser",
+    "password": "testpass123"
+}
+
+###
+@access_token = {{signin.response.body.accessToken}}
+@refresh_token = {{signin.response.body.refreshToken}}
+
+### Sign in with predefined user (user1)
+# @name signin_user1
+POST http://localhost:4000/api/auth/signin
+Content-Type: application/json
+
+{
+    "username": "user1",
+    "password": "password1"
+}
+
+### Failed sign in (wrong password)
+POST http://localhost:4000/api/auth/signin
+Content-Type: application/json
+
+{
+    "username": "user1",
+    "password": "wrongpassword"
+}
+
+### Refresh Token
+POST http://localhost:4000/api/auth/refresh
+Content-Type: application/json
+Authorization: Bearer {{refresh_token}}
+
+### Users API Tests ###
+
+### Get all users
+GET http://localhost:4000/api/users
+
+### Get specific user
+GET http://localhost:4000/api/users/testuser
+
+### Update user
+PUT http://localhost:4000/api/users/testuser
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+    "username": "testuser",
+    "password": "newpassword789"
+}
+
+### Delete user
+DELETE http://localhost:4000/api/users/testuser
+Authorization: Bearer {{access_token}}
