@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import jwt from "jsonwebtoken";
 
-import User from "../models/User";
+import User from '../models/user.model';
 import IJwtPayload from '../models/JWTPayload';
 
 const _SECRET: string = 'api+jwt';

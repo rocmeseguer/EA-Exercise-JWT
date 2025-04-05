@@ -92,6 +92,65 @@ Los tokens se validan a través de middlewares:
 - `verifyRefreshToken`: Valida refresh tokens
 - `isOwner`: Verifica que el usuario sea propietario del recurso
 
+# Diagramas de Secuencia - Flujo de Autenticación JWT
+
+## Inicio de sesión
+
+```mermaid
+sequenceDiagram
+    participant C as Cliente
+    participant A as API
+    participant J as JWT Service
+
+    %% Inicio de sesión
+    C->>A: POST /auth/signin {username, password}
+    A->>J: Generar Access Token (15min)
+    A->>J: Generar Refresh Token (7d)
+    J->>A: accessToken
+    J->>A: refreshToken
+    A->>C: Return {accessToken, refreshToken}
+    C->>C: Almacenar Tokens
+```
+## Llamada a API Protegida
+
+```mermaid
+sequenceDiagram
+    participant C as Cliente
+    participant A as API
+    participant J as JWT Service
+
+    C->>A: GET /api/users (Bearer accessToken)
+    A->>J: Verificar Access Token
+    alt Token válido
+        J->>A: Token OK
+        A->>C: 200 + Datos solicitados
+    else Token expirado
+        J->>A: Token expirado
+        A->>C: 401 Unauthorized
+    end
+```
+## Renovación del Access Token
+
+```mermaid
+sequenceDiagram
+    participant C as Cliente
+    participant A as API
+    participant J as JWT Service
+
+    %% Flujo de Refresh
+    C->>A: POST /auth/refresh (Bearer refreshToken)
+    A->>J: Verificar Refresh Token
+    alt Refresh Token válido
+        J->>A: Token OK
+        A->>J: Generar nuevo Access Token
+        J->>A: refreshToken
+        A->>C: 200 + Nuevo Access Token
+        C->>C: Almacenar nuevo Access Token
+    else Refresh Token expirado
+        J->>A: Token inválido
+        A->>C: 401 Unauthorized
+    end
+```
 
 ## Referencias
 

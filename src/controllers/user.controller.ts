@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import IUser from '../models/User';
+import IUser from '../models/user.model';
 import { userService } from '../services/user.service';
 
 export async function createUser(req: Request, res: Response): Promise<Response> {
